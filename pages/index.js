@@ -56,7 +56,8 @@ function Home({data}) {
           Você também pode copiar e colar o "Pix Copia Cola"<br/>
           Para cada real doado até 11/05/2022 <a href="https://twitter.com/luisbebop">@luisbebop</a> irá dar match<br/>
           Irei comprar cripto com o saldo doado e enviar para Ucrânia 🇺🇦<br/>
-          Esse projeto é feito com a API do PIX da <a href="https://www.infinitepay.io">InfinitePay</a>
+          Esse projeto é feito com a API do PIX da <a href="https://www.infinitepay.io">InfinitePay</a><br/>
+          O código do projeto está <a href="https://github.com/luisbebop/pix-donate">aqui</a>
         </p>
       </section>
     </Layout>
