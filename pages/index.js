@@ -43,6 +43,8 @@ function Home({data}) {
             alt="PIX QR Code"
         />
 
+        <span className={utilStyles.smallStatus}>Checando pagamento</span>
+
         <PulseLoader color="#3775c6" loading={true} size={20} /> <br/>
 
         <CopyToClipboard text={data.data.attributes.br_code} onCopy={() => setState({isQrcodeCopied: true})}>

@@ -53,3 +53,8 @@
 .lightText {
   color: #666;
 }
+
+.smallStatus {
+  color: #666;
+  font-size: 0.8rem;
+}
