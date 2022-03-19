@@ -48,8 +48,8 @@ function Home({data}) {
         <PulseLoader color="#3775c6" loading={true} size={20} /> <br/>
 
         <CopyToClipboard text={data.data.attributes.br_code} onCopy={() => setState({isQrcodeCopied: true})}>
-          <button>
-            {state.isQrcodeCopied ? "Copiado! Cole no app do banco" : "Clique aqui para copiar PIX Copia e Cola"}
+          <button className={utilStyles.button64} role="button">
+            {state.isQrcodeCopied ? "Copiado!" : "Copiar PIX Copia e Cola"}
           </button>
         </CopyToClipboard>
 
