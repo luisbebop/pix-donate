@@ -1,209 +1,86 @@
 import Head from 'next/head'
+import Image from 'next/image'
+import Layout, { siteTitle } from '../components/layout'
+import utilStyles from '../styles/utils.module.css'
+import { CopyToClipboard } from "react-copy-to-clipboard"
+import { useState, useEffect } from 'react'
+import PulseLoader from "react-spinners/PulseLoader"
+import {useRouter} from 'next/router'
 
-export default function Home() {
-  return (
-    <div className="container">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+function Home({data}) {
+  const router = useRouter()
+  const [state, setState] = useState({
+    isQrcodeCopied: false,
+    transaction_id: data.data.id
+  })
 
-      <main>
-        <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
-
-        <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel" className="logo" />
-        </a>
-      </footer>
-
-      <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer img {
-          margin-left: 0.5rem;
-        }
-
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
-
-        .title a {
-          color: #0070f3;
-          text-decoration: none;
-        }
-
-        .title a:hover,
-        .title a:focus,
-        .title a:active {
-          text-decoration: underline;
-        }
-
-        .title {
-          margin: 0;
-          line-height: 1.15;
-          font-size: 4rem;
-        }
-
-        .title,
-        .description {
-          text-align: center;
-        }
-
-        .description {
-          line-height: 1.5;
-          font-size: 1.5rem;
-        }
-
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          max-width: 800px;
-          margin-top: 3rem;
-        }
-
-        .card {
-          margin: 1rem;
-          flex-basis: 45%;
-          padding: 1.5rem;
-          text-align: left;
-          color: inherit;
-          text-decoration: none;
-          border: 1px solid #eaeaea;
-          border-radius: 10px;
-          transition: color 0.15s ease, border-color 0.15s ease;
-        }
-
-        .card:hover,
-        .card:focus,
-        .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
-        }
-
-        .card h3 {
-          margin: 0 0 1rem 0;
-          font-size: 1.5rem;
-        }
-
-        .card p {
-          margin: 0;
-          font-size: 1.25rem;
-          line-height: 1.5;
-        }
-
-        .logo {
-          height: 1em;
-        }
-
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetch(`/api/check_pix?uuid=${state.transaction_id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data)
+          if (data.attributes.authorization_code === "00") {
+            router.push('/confirmed')
           }
-        }
-      `}</style>
+        })
+    }, 2000)
+    return () => clearInterval(interval)
+  }, [])
 
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
+  return (
+    <Layout home>
+      <Head>
+        <title>{siteTitle}</title>
+      </Head>
+      <section className={utilStyles.headingMd}>
+        <Image
+            priority
+            src={`https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${data.data.attributes.br_code}&choe=UTF-8`}
+            className={utilStyles.borderCircle}
+            height={200}
+            width={200}
+            alt="PIX QR Code"
+        />
 
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
-    </div>
+        <PulseLoader color="#3775c6" loading={true} size={20} /> <br/>
+
+        <CopyToClipboard text={data.data.attributes.br_code} onCopy={() => setState({isQrcodeCopied: true})}>
+          <button>
+            {state.isQrcodeCopied ? "Copiado! Cole no app do banco" : "Clique aqui para copiar PIX Copia e Cola"}
+          </button>
+        </CopyToClipboard>
+
+        <p>
+          Use o pix acima para doar R$ 1,11 ou mais para Ucrânia 🇺🇦 <br/>
+          Você também pode copiar e colar o "Pix Copia Cola"<br/>
+          Para cada real doado até 11/05/2022 <a href="https://twitter.com/luisbebop">@luisbebop</a> irá dar match<br/>
+          Irei comprar cripto com o saldo doado e enviar para Ucrânia 🇺🇦<br/>
+          Esse projeto é feito com a API do PIX da <a href="https://www.infinitepay.io">InfinitePay</a>
+        </p>
+      </section>
+    </Layout>
   )
 }
+
+// This gets called on every request
+export async function getServerSideProps() {
+  const res = await fetch(`https://api.infinitepay.io/v2/transactions`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Env': 'production',
+      'Authorization': process.env.API_KEY_INFINITEPAY,
+    },
+    body: JSON.stringify({'amount': 111, 'capture_method': 'pix'})
+  })
+  const data = await res.json()
+
+  console.log(data)
+
+  return { props: { data } }
+}
+
+export default Home
+
